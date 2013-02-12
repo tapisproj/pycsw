@@ -33,6 +33,9 @@ import ConfigParser
 import getopt
 import logging
 import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from pycsw import admin, config
 
@@ -211,7 +214,6 @@ if COMMAND not in ['post_xml', 'get_sysprof', 'validate_xml']:
 
     DATABASE = SCP.get('repository', 'database')
     URL = SCP.get('server', 'url')
-    HOME = SCP.get('server', 'home')
     METADATA = dict(SCP.items('metadata:main'))
     try:
         TABLE = SCP.get('repository', 'table')
@@ -234,7 +236,7 @@ elif COMMAND == 'validate_xml':
         sys.exit(12)
 
 if COMMAND == 'setup_db':
-    admin.setup_db(DATABASE, TABLE, HOME)
+    admin.setup_db(DATABASE, TABLE)
 elif COMMAND == 'load_records':
     admin.load_records(CONTEXT, DATABASE, TABLE, XML_DIRPATH, RECURSIVE)
 elif COMMAND == 'export_records':

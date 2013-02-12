@@ -39,7 +39,7 @@ from pycsw import metadata, repository, util
 LOGGER = logging.getLogger(__name__)
 
 
-def setup_db(database, table, home):
+def setup_db(database, table):
     """Setup database tables and indexes"""
     from sqlalchemy import Column, create_engine, Integer, String, MetaData, \
         Table, Text
@@ -171,28 +171,27 @@ def setup_db(database, table, home):
 
     if dbase.name == 'postgresql':  # create plpythonu functions within db
         LOGGER.info('Setting plpythonu functions')
-        pycsw_home = home
         conn = dbase.connect()
         function_query_spatial = '''
-    CREATE OR REPLACE FUNCTION query_spatial(bbox_data_wkt text, bbox_input_wkt text, predicate text, distance text)
+    CREATE OR REPLACE FUNCTION query_spatial(modpath text, bbox_data_wkt text, bbox_input_wkt text, predicate text, distance text)
     RETURNS text
     AS $$
         import sys
-        sys.path.append('%s')
+        sys.path.append(modpath)
         from pycsw import util
         return util.query_spatial(bbox_data_wkt, bbox_input_wkt, predicate, distance)
         $$ LANGUAGE plpythonu;
-    ''' % pycsw_home
+    '''
         function_update_xpath = '''
-    CREATE OR REPLACE FUNCTION update_xpath(xml text, recprops text)
+    CREATE OR REPLACE FUNCTION update_xpath(modpath text, xml text, recprops text)
     RETURNS text
     AS $$
         import sys
-        sys.path.append('%s')
+        sys.path.append(modpath)
         from pycsw import util
         return util.update_xpath(xml, recprops)
         $$ LANGUAGE plpythonu;
-    ''' % pycsw_home
+    '''
         conn.execute(function_query_spatial)
         conn.execute(function_update_xpath)
 

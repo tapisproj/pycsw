@@ -29,6 +29,7 @@
 # =================================================================
 
 import logging
+import os
 from pycsw import gml, util
 
 LOGGER = logging.getLogger(__name__)
@@ -272,8 +273,8 @@ def _get_spatial_operator(geomattr, element, dbtype, nsmap):
                 (spatial_predicate, geomattr, geometry.wkt)
     else:
         LOGGER.debug('Adjusting spatial query')
-        spatial_query = "query_spatial(%s,'%s','%s','%s')" % \
-                        (geomattr, geometry.wkt, spatial_predicate, distance)
+        spatial_query = "query_spatial('%s', %s,'%s','%s','%s')" % \
+                        (os.path.abspath(os.path.join(os.path.dirname(__file__), '..')), geomattr, geometry.wkt, spatial_predicate, distance)
 
     return spatial_query
 

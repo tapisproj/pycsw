@@ -259,7 +259,8 @@ class Repository(object):
                         constraint['where']).update({
                             getattr(self.dataset,
                             rpu['rp']['dbcol']): rpu['value'],
-                            'xml': func.update_xpath(str(self.context.namespaces),
+                            'xml': func.update_xpath(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')),
+                                   str(self.context.namespaces),
                                    getattr(self.dataset,
                                    self.context.md_core_model['mappings']['pycsw:XML']),
                                    str(rpu)),
