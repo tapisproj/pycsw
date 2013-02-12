@@ -31,6 +31,7 @@
 
 import os
 import sys
+import codecs
 import cgi
 from urllib2 import quote, unquote
 import urlparse
@@ -43,7 +44,6 @@ from pycsw import config, fes, log, metadata, util, sru, opensearch
 import logging
 
 LOGGER = logging.getLogger(__name__)
-
 
 class Csw(object):
     ''' Base CSW server '''
@@ -77,23 +77,24 @@ class Csw(object):
         self.domainquerytype = 'list'
 
         # load user configuration
-        try:
-            if isinstance(rtconfig, SafeConfigParser):  # serialized already
-                self.config = rtconfig
-            else:
-                self.config = SafeConfigParser()
-                if isinstance(rtconfig, dict):  # dictionary
-                    for section, options in rtconfig.iteritems():
-                        self.config.add_section(section)
-                        for k, v in options.iteritems():
-                            self.config.set(section, k, v)
-                else:  # configuration file
-                    self.config.readfp(open(rtconfig))
-        except Exception, err:
-            self.response = self.exceptionreport(
-            'NoApplicableCode', 'service',
-            'Error opening configuration %s' % rtconfig)
-            return
+        # try:
+        if isinstance(rtconfig, SafeConfigParser):  # serialized already
+            self.config = rtconfig
+        else:
+            self.config = SafeConfigParser()
+            if isinstance(rtconfig, dict):  # dictionary
+                for section, options in rtconfig.iteritems():
+                    self.config.add_section(section)
+                    for k, v in options.iteritems():
+                        self.config.set(section, k, v)
+            else:  # configuration file
+                #self.config.readfp(open(rtconfig))
+                self.config.readfp(codecs.open(rtconfig, 'r', encoding='utf-8'))
+        # except Exception, err:
+        #     self.response = self.exceptionreport(
+        #     'NoApplicableCode', 'service',
+        #     'Error opening configuration %s' % rtconfig)
+        #     return
 
         # set server.home safely
         # TODO: make this more abstract
@@ -123,7 +124,7 @@ class Csw(object):
 
         # set mimetype
         if self.config.has_option('server', 'mimetype'):
-            self.mimetype = self.config.get('server', 'mimetype')
+            self.mimetype = self.config.get('server', 'mimetype').encode('utf-8')
 
         # set encoding
         if self.config.has_option('server', 'encoding'):

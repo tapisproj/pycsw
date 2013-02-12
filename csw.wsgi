@@ -120,7 +120,7 @@ def application(env, start_response):
     status = '200 OK'
     start_response(status, headers.items())
 
-    return [contents]
+    return [contents.encode('utf-8')]
 
 if __name__ == '__main__':  # run inline using WSGI reference implementation
     from wsgiref.simple_server import make_server
