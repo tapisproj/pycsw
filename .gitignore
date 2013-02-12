@@ -18,3 +18,5 @@ data
 
 # PyCharm
 .idea
+
+default.cfg
