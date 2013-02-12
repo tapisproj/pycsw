@@ -15,3 +15,6 @@ default.cfg
 
 # test repositories
 data
+
+# PyCharm
+.idea
