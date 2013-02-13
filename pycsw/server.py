@@ -289,15 +289,15 @@ class Csw(object):
     def dispatch_wsgi(self):
         ''' WSGI handler '''
 
-        if hasattr(self,'response'):
-            return self._write_response()
+        if hasattr(self, 'response'):
+            return None, self._write_response()
 
         LOGGER.debug('WSGI mode detected')
 
         if self.environ['REQUEST_METHOD'] == 'POST':
             try:
                 request_body_size = int(self.environ.get('CONTENT_LENGTH', 0))
-            except (ValueError):
+            except ValueError:
                 request_body_size = 0
 
             postdata = self.environ['wsgi.input'].read(request_body_size)
