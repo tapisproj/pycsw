@@ -2211,12 +2211,12 @@ class Csw(object):
 
         if (isinstance(self.kvp, dict) and 'outputformat' in self.kvp and
             self.kvp['outputformat'] == 'application/json'):
-            self.contenttype = self.kvp['outputformat']
+            contenttype = self.kvp['outputformat']
             from pycsw.formats import fmt_json
             response = fmt_json.exml2json(self.response,
             self.context.namespaces, self.pretty_print)
         else:  # it's XML
-            self.contenttype = self.mimetype
+            contenttype = self.mimetype
             response = etree.tostring(self.response,
             pretty_print=self.pretty_print)
             xmldecl = '<?xml version="1.0" encoding="%s" standalone="no"?>\n' \
@@ -2226,8 +2226,7 @@ class Csw(object):
         if hasattr(self, 'log'):
             LOGGER.debug('Response:\n%s' % response)
 
-        return "%s%s%s" % (xmldecl, appinfo, response)
-
+        return contenttype, "%s%s%s" % (xmldecl, appinfo, response)
 
     def _gen_soap_wrapper(self):
         ''' Generate SOAP wrapper '''
