@@ -69,11 +69,6 @@ def application(env, start_response):
     if 'PYCSW_CONFIG' in env:
         config = env['PYCSW_CONFIG']
 
-    if env['QUERY_STRING'].lower().find('config') != -1:
-        for kvp in env['QUERY_STRING'].split('&'):
-            if kvp.lower().find('config') != -1:
-                config = kvp.split('=')[1]
-
     if not os.path.isabs(config):
         config = os.path.join(app_path, config)
 
