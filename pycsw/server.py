@@ -290,7 +290,7 @@ class Csw(object):
         ''' WSGI handler '''
 
         if hasattr(self, 'response'):
-            return None, self._write_response()
+            return self._write_response()
 
         LOGGER.debug('WSGI mode detected')
 
