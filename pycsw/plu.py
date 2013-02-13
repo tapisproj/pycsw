@@ -9,7 +9,8 @@ def dispatch_update(context, repository, config, project_id):
     p = repository.session.connection()\
         .execute('select name, description, created_at, updated_at from projects where id = %s', project_id)\
         .first()
-    xml_id = "lv.vraa.tapis:{}".format(project_id)
+    xml_id = "lv.gov.vraa.tapis:{}".format(project_id)
+    # TODO bounding box calculation - call wms or wfs?
     xml = plu_md_template.format(id=xml_id,
                                  contact_name=config.get('metadata:inspire', 'contact_name'),
                                  email=config.get('metadata:inspire', 'contact_email'),
@@ -34,7 +35,7 @@ plu_md_template = u'''
         <gmd:LanguageCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="lvl">lvl</gmd:LanguageCode>
     </gmd:language>
     <gmd:hierarchyLevel>
-        <gmd:MD_ScopeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+        <gmd:MD_ScopeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#MD_ScopeCode" codeListValue="service">service</gmd:MD_ScopeCode>
     </gmd:hierarchyLevel>
     <gmd:contact>
         <gmd:CI_ResponsibleParty>
@@ -192,31 +193,7 @@ plu_md_template = u'''
             <gmd:descriptiveKeywords>
                 <gmd:MD_Keywords>
                     <gmd:keyword>
-                        <gco:CharacterString>1</gco:CharacterString>
-                    </gmd:keyword>
-                    <gmd:thesaurusName>
-                        <gmd:CI_Citation>
-                            <gmd:title>
-                                <gco:CharacterString>GEMET - INSPIRE themes, version 1.0</gco:CharacterString>
-                            </gmd:title>
-                            <gmd:date>
-                                <gmd:CI_Date>
-                                    <gmd:date>
-                                        <gco:Date>2008-06-01</gco:Date>
-                                    </gmd:date>
-                                    <gmd:dateType>
-                                        <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication">publication</gmd:CI_DateTypeCode>
-                                    </gmd:dateType>
-                                </gmd:CI_Date>
-                            </gmd:date>
-                        </gmd:CI_Citation>
-                    </gmd:thesaurusName>
-                </gmd:MD_Keywords>
-            </gmd:descriptiveKeywords>
-            <gmd:descriptiveKeywords>
-                <gmd:MD_Keywords>
-                    <gmd:keyword>
-                        <gco:CharacterString>teritorialajs planojums</gco:CharacterString>
+                        <gco:CharacterString>Planned land use</gco:CharacterString>
                     </gmd:keyword>
                     <gmd:thesaurusName>
                         <gmd:CI_Citation>
@@ -226,7 +203,7 @@ plu_md_template = u'''
                             <gmd:date>
                                 <gmd:CI_Date>
                                     <gmd:date>
-                                        <gco:Date>2012-09-19</gco:Date>
+                                        <gco:Date>{date}</gco:Date>
                                     </gmd:date>
                                     <gmd:dateType>
                                         <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="">creation</gmd:CI_DateTypeCode>
