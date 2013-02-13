@@ -9,14 +9,14 @@ def dispatch_update(context, repository, config, project_id):
     p = repository.session.connection()\
         .execute('select name, description, created_at, updated_at from projects where id = %s', project_id)\
         .first()
-    xml_id = "lv.gov.vraa.tapis:{}".format(project_id)
+    xml_id = "lv.gov.vraa.tapis:{0}".format(project_id)
     # TODO bounding box calculation - call wms or wfs?
     xml = plu_md_template.format(id=xml_id,
                                  contact_name=config.get('metadata:inspire', 'contact_name'),
                                  email=config.get('metadata:inspire', 'contact_email'),
                                  organization=config.get('metadata:main', 'provider_name'),
                                  date=p.created_at.date(), document_name=p.name, abstract=p.description,
-                                 wms_url="http://tapisapp.alise.lv:8087/geoserver/inspire_{}/wms".format(project_id))
+                                 wms_url="http://tapisapp.alise.lv:8087/geoserver/inspire_{0}/wms".format(project_id))
     exml = etree.fromstring(xml)
     record = metadata.parse_record(context, exml, repository)
     for rec in record:
