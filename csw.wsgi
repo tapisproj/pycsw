@@ -119,7 +119,7 @@ def application(env, start_response):
 
 if __name__ == '__main__':  # run inline using WSGI reference implementation
     from wsgiref.simple_server import make_server
-    port = 8000
+    port = 8084
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     httpd = make_server('', port, application)
