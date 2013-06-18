@@ -379,7 +379,7 @@ class Csw(object):
         path_info = self.environ['PATH_INFO'].lstrip('/')
         if path_info == 'update':
             import plu
-            return plu.dispatch_update(self.context, self.repository, self.config, self.kvp['project_id'])
+            return plu.dispatch_update(self.context, self.repository, self.config, self.kvp['document_id'])
         elif path_info not in ['ows', 'csw']:
             error = 1
             locator = 'service'

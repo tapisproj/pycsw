@@ -3,23 +3,31 @@
 from lxml import etree
 import metadata
 import util
+import log
+import logging
 
+LOGGER = logging.getLogger(__name__)
 
-def dispatch_update(context, repository, config, project_id):
+def dispatch_update(context, repository, config, document_id):
+    LOGGER.debug('Dispatch for document. Id: %s'%document_id)
     p = repository.session.connection()\
-        .execute('select name, description, created_at, updated_at from projects where id = %s', project_id)\
+        .execute('select name, annotation, created_at, updated_at from documents where id = %s', document_id)\
         .first()
-    xml_id = "lv.gov.vraa.tapis:{0}".format(project_id)
+    xml_id = "lv.gov.vraa.tapis:{0}".format(document_id)
+    LOGGER.debug('xml_id: %s'%xml_id)
     # TODO bounding box calculation - call wms or wfs?
     xml = plu_md_template.format(id=xml_id,
                                  contact_name=config.get('metadata:inspire', 'contact_name'),
                                  email=config.get('metadata:inspire', 'contact_email'),
                                  organization=config.get('metadata:main', 'provider_name'),
-                                 date=p.created_at.date(), document_name=p.name, abstract=p.description,
-                                 wms_url="http://tapisapp.alise.lv:8087/geoserver/inspire_{0}/wms".format(project_id))
+                                 date=p.created_at.date(), document_name=p.name, abstract=p.annotation,
+                                 wms_url="http://tapisapp.alise.lv:8087/geoserver/inspire_{0}/wms".format(document_id))
+    LOGGER.debug(('xml: %s'%xml).encode('utf-8'))
     exml = etree.fromstring(xml)
     record = metadata.parse_record(context, exml, repository)
+    LOGGER.debug('record done')
     for rec in record:
+        LOGGER.debug(('rec: %s'%rec).encode('utf-8'))
         if len(repository.query_ids(ids=[xml_id])) == 0:
             repository.insert(rec, 'local', util.get_today_and_now())
         else:
